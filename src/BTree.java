@@ -1,8 +1,12 @@
 
-public class BTree {
+public class BTree 
+{
+	BTreeNode root;
 
-	public BTree() {
-		// TODO Auto-generated constructor stub
+	public BTree()
+	{
+		
 	}
+	
 
 }
