@@ -154,7 +154,12 @@ public class Messages implements Iterable<Message>
 				for (int i=0; i<spams.length && !isSpam ; i++)
 					isSpam = checkSpam(currMsg,spams[i][0],spams[i][1]);
 				if (isSpam)
-					spamLines += " " + currMsg;
+				{
+					if (spamLines.isEmpty())
+						spamLines += currMsg;
+					else
+						spamLines += "," + currMsg;
+				}	
 			}
 			currMsg ++;			
 		}
