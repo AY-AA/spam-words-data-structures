@@ -1,4 +1,3 @@
-
 public class Message 
 {
 	private String _receiver;
@@ -16,6 +15,20 @@ public class Message
 		_receiver = receiver;
 		_sender = sender;
 		_content = content;
+	}
+	
+	public String getContent()
+	{
+		return _content;
+	}
+	
+	public String getSender()
+	{
+		return _sender;
+	}
+	public String getReceiver()
+	{
+		return _receiver;
 	}
 	
 	/**
