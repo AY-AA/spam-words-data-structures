@@ -137,7 +137,9 @@ public class Messages implements Iterable<Message>
 
 	public String findSpams(String fileName,BTree bTree)
 	{
-		String[][] spams = readSpams(fileName); // up is the word, down is the reps number allowed
+		Spam spam = new Spam();
+		
+		String[][] spams = spam.generateSpams(fileName); // up is the word, down is the reps number allowed
 		String spamLines = "";
 		Iterator<Message> mItr = iterator();
 		int currMsg = 0;
