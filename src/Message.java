@@ -26,6 +26,7 @@ public class Message
 	{
 		return _sender;
 	}
+
 	public String getReceiver()
 	{
 		return _receiver;
