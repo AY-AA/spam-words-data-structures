@@ -17,21 +17,24 @@ public class Message
 		_content = content;
 	}
 	
+	// --- Getters --- //
 	public String getContent()
 	{
 		return _content;
 	}
-	
 	public String getSender()
 	{
 		return _sender;
 	}
-
 	public String getReceiver()
 	{
 		return _receiver;
 	}
+
 	
+	
+	
+	// TESTS
 	/**
 	 * returns a string which includes the message's info:
 	 * sender, receiver and message content

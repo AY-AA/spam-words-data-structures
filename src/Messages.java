@@ -91,8 +91,9 @@ public class Messages implements Iterable<Message>
 	/**
 	 * creates a hash table based on the words in the message.
 	 */
-	public void createHashTables(int m)
+	public void createHashTables(String mString)
 	{
+		int m = Integer.parseInt(mString);
 		_messagesHashTable = new HashTable[_size];
 		int currTable = 0;
 		Iterator<Message> mItr = iterator();
@@ -125,23 +126,30 @@ public class Messages implements Iterable<Message>
 	 * @return
 	 */
 	public String findSpams(String fileName,BTree bTree) {
-		Spam spam = new Spam();
-		String[][] spams = spam.generateSpams(fileName); // up is the word, down is the reps number allowed
-		String spamLines = "";
+		Spams spams = new Spams();
+		spams.generateSpams(fileName); 
+		Iterator<Spam> sItr;
 		Iterator<Message> mItr = iterator();
-		int currMsg = 0;
+		String spamLines = "";					//ans string
+		int line = 0;
 		while (mItr.hasNext()) {
-			Message curr = (Message) mItr.next();
-			if (!areFriends(bTree,curr)) {
+			Message currMsg = (Message) mItr.next();
+			if (!areFriends(bTree,currMsg)) {
 				boolean isSpam = false;
-				for (int i=0; i<spams.length && !isSpam ; i++)
-					isSpam = checkSpam(currMsg,spams[i][0],spams[i][1]);
+				sItr = spams.iterator();
+				while (sItr.hasNext() && !isSpam)
+				{
+					Spam currSpam = sItr.next();
+					String spamWord = currSpam.getWord();
+					int spamPerc = currSpam.getPercent();
+					isSpam = checkSpam(line,spamWord,spamPerc);
+				}
 				if (isSpam && spamLines.isEmpty())
 					spamLines += currMsg;
 				else if (isSpam)
 					spamLines += "," + currMsg;
 			}
-			currMsg ++;			
+			line ++;			
 		}
 		return spamLines;
 	}
@@ -168,14 +176,14 @@ public class Messages implements Iterable<Message>
 	 * @param number is the max allowed number that the spam word can appear in the message
 	 * @return
 	 */
-	private boolean checkSpam(int currMsg,String spam, String number) {
+	private boolean checkSpam(int currMsg,String spam, int percAllowed) {
 		HashListElement currElem = _messagesHashTable[currMsg].search(spam);
 		if (currElem != null)
 		{
-			int numOfWords = _messagesHashTable[currMsg].getN();	//num of words in curr msg
-			int numAllowed = Integer.parseInt(number);				//num of reps allowed for spam word
-			int numOfReps = currElem.getCounter();					//num of reps of spam word in the msg
-			return (numOfReps/numOfWords)*100 > numAllowed;
+			double numOfWords = _messagesHashTable[currMsg].getN();	//num of words in curr msg
+			double numOfReps = currElem.getCounter();					//num of reps of spam word in the msg
+			double repsPercent = numOfReps/numOfWords;
+			return repsPercent*100 > percAllowed;
 		}
 		return false;
 	}
@@ -275,4 +283,35 @@ public class Messages implements Iterable<Message>
 		}
 		return temp.split(" ");
 	}
+	public String findSpams(String fileName) {
+		Spams spams = new Spams();
+		spams.generateSpams(fileName); 
+		Iterator<Spam> sItr;
+		Iterator<Message> mItr = iterator();
+		String spamLines = "";					//ans string
+		int line = 0;
+		while (mItr.hasNext()) {
+			Message currMsg = (Message) mItr.next();
+			if (5 == 5) {
+				boolean isSpam = false;
+				sItr = spams.iterator();
+				while (sItr.hasNext() && !isSpam)
+				{
+					Spam currSpam = sItr.next();
+					String spamWord = currSpam.getWord();
+					int spamPerc = currSpam.getPercent();
+					isSpam = checkSpam(line,spamWord,spamPerc);
+				}
+				if (isSpam && spamLines.isEmpty())
+					spamLines += line;
+				else if (isSpam)
+					spamLines += "," + line;
+			}
+			line ++;			
+		}
+		return spamLines;
+	}
+
+
+
 }

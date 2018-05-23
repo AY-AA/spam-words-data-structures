@@ -13,8 +13,6 @@ public class MessagesTest {
 		
 
 	}
-	@Test
-
 	public void test1()
 	{
 		msg1.generateMessages("messages.txt");
@@ -35,7 +33,12 @@ public class MessagesTest {
 	public void test2()
 	{
 		msg1.generateMessages("messages.txt");
-		msg1.createHashTables(16);
+		msg1.createHashTables("16");
+		String spamMessages = msg1.findSpams("spam_words.txt");
+		System.out.println(spamMessages);
+		
+		
+		
 	}
-	
+
 }
