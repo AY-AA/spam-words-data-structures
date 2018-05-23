@@ -6,6 +6,7 @@ import java.io.IOException;
 import java.util.Iterator;
 import java.util.NoSuchElementException;
 
+
 public class Messages implements Iterable<Message>
 {
 	private Message[] _list;
