@@ -283,6 +283,8 @@ public class Messages implements Iterable<Message>
 		}
 		return temp.split(" ");
 	}
+	
+	//////////////// DELETE AFTER TESTS! TEST WITH NO TREE
 	public String findSpams(String fileName) {
 		Spams spams = new Spams();
 		spams.generateSpams(fileName); 
