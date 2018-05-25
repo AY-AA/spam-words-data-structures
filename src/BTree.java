@@ -16,6 +16,15 @@ public class BTree {
         this._t = Integer.parseInt(t);
     }
 
+    public void createFullTree(String path) {
+        _fileName = path;
+        initiatingFileHandler();
+        getTreeSize();
+        _friends = new String[_treeSize];
+        getFriendsFromFile();
+        insertFriends();
+    }
+
     private void splitChild(BTreeNode x, int i, BTreeNode y) {
         BTreeNode z = new BTreeNode(_t);
         z.setLeaf(y.is_leaf());
@@ -143,15 +152,6 @@ public class BTree {
             }
             insertNonFull(x.getChild(i), key);
         }
-    }
-
-    public void createFullTree(String path) {
-        _fileName = path;
-        initiatingFileHandler();
-        getTreeSize();
-        _friends = new String[_treeSize];
-        getFriendsFromFile();
-        insertFriends();
     }
 
     private void insertFriends(){
