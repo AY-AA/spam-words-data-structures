@@ -14,50 +14,51 @@ public class BTree {
 
     public BTree(String t) {
         this._t = Integer.parseInt(t);
-        root.setLeaf(true);
     }
 
-    public void insert(String newValue) {
-        //need to complete method
-    }
-
-    private void splitChiled(BTreeNode x, int i, BTreeNode y) {
-        BTreeNode z = new BTreeNode(_t, true);
+    private void splitChild(BTreeNode x, int i, BTreeNode y) {
+        BTreeNode z = new BTreeNode(_t);
         z.setLeaf(y.is_leaf());
         z.set_n(_t - 1);
-        for (int j = 0; j < _t - 1; j++) {
-            z.get_keys()[j] = y.get_keys()[j + _t];
+        for (int j = 0; j <= _t - 1; j++) {
+            z.setKeyInPlace(j, y.getKeyInPlace((j + _t)));
         }
-        if(!y.is_leaf()){ //needs to complete method
-            for (int k = 0; k < _t; k++) {
-
+        if (!y.is_leaf()) {
+            for (int k = 0; k <= _t; k++) {
+                z.setChildInPlace(k, y.getChild((k + _t)));
             }
         }
+        y.set_n(_t - 1);
+        for (int j = (x.get_n() + 1); j > i + 1; j--) {
+            x.setChildInPlace(j + 1, x.getChild(j));
+        }
+        x.setChildInPlace(i + 1, z);
+        for (int j = x.get_n(); j > i; j--) {
+            x.setKeyInPlace(j + 1, x.getKeyInPlace(j));
+        }
+        x.setKeyInPlace(i, y.getKeyInPlace(_t));
+        x.set_n(x.get_n() + 1);
     }
-    // I thought about creating a method in BTreeNode that determine which child to go to, left or right (by receiving i as input)
 
-    public BTreeNode search(String key) {
+    private boolean search(String key) {
         if (root == null) {
-            return root;
+            return false;
         }
         return search(key, root);
     }
 
-    private BTreeNode search(String key, BTreeNode x) {
+    private boolean search(String key, BTreeNode x) {
         int i = 0;
-        while (i < x.get_n() && key.compareTo(x.get_keys()[i]) > 0) { //if key is bigger than current
+        while (i < x.get_n() && key.compareTo(x.getKeyInPlace(i)) > 0) { //if key is bigger than current
             i++;
         }
-        if (i <= x.get_n() && x.get_keys()[i].equals(key)) { //if found
-            return x;
+        if (i < x.get_n() && key.compareTo(x.getKeyInPlace(i)) == 0) { //if found
+            return true;
         }
         if (x.is_leaf()) { //if not found
-            return null;
-        }
-        if (x.getLeftChild() != null && (x.get_keys()[i].compareTo(key) > 0)) {
-            return search(key, x.getLeftChild());
+            return false;
         } else {
-            return search(key, x.getRightChild());
+            return search(key, x.getChild(i));
         }
     }
 
@@ -95,6 +96,8 @@ public class BTree {
         int counter = 0;
         try {
             while ((currentPairOfFriends = _bufferedReader.readLine()) != null) {
+                // build the btree and insert
+                insert(currentPairOfFriends);
                 counter++;
             }
         } catch (IOException ex) {
@@ -105,9 +108,40 @@ public class BTree {
         }
     }
 
-    private void buildBTree() {
-        for (int i = 0; i < _friends.length; i++) {
-            insert(_friends[i]);
+    private void insert(String k) {
+        BTreeNode r = root;
+        if (r.get_n() == 2 * _t - 1) {
+            BTreeNode s = new BTreeNode(_t);
+            s.setLeaf(false);
+            s.set_n(0);
+            s.setChildInPlace(1, r);
+            splitChild(s, 1, r);
+            r = s;
+        }
+        insertNonFull(r, k);
+    }
+
+    private void insertNonFull(BTreeNode x, String key) {
+        int i = x.get_n();
+        if (x.is_leaf()) {
+            while (i >= 1 && key.compareTo(x.getKeyInPlace(i)) > 0) {
+                x.setKeyInPlace(i + 1, x.getKeyInPlace(i));
+                i--;
+            }
+            x.setKeyInPlace(i, key);
+            x.set_n(x.get_n() + 1);
+        } else {
+            while (i >= 1 && key.compareTo(x.getKeyInPlace(i)) > 0) {
+                i--;
+            }
+            i++;
+            if (x.getChild(i).get_n() == 2 * _t - 1) {
+                splitChild(x, i, x.getChild(i));
+                if (key.compareTo(x.getKeyInPlace(i)) > 0) {
+                    i++;
+                }
+            }
+            insertNonFull(x.getChild(i), key);
         }
     }
 
@@ -117,7 +151,13 @@ public class BTree {
         getTreeSize();
         _friends = new String[_treeSize];
         getFriendsFromFile();
-        buildBTree();
+        insertFriends();
+    }
+
+    private void insertFriends(){
+        for (int i = 0; i < _friends.length; i++) {
+            insert(_friends[i]);
+        }
     }
 
     public boolean areFriends(String sender, String receiver) {
