@@ -69,7 +69,7 @@ public class HashList {
 		HashListElement currElem = _head;
 		while (currElem != null) 
 		{
-			ans += currElem.getMessage();
+			ans += " " +currElem.getMessage();
 			currElem = currElem.getNext();
 		}
 		return ans;

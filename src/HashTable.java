@@ -3,6 +3,7 @@ public class HashTable {
 	private HashList[] _hashList;
 	private final double _A = ((Math.sqrt(5))-1)/2;
 	private int _m;
+	private int _n = 0;		//number of object in the table
 	
 	public HashTable(int m) 
 	{
@@ -29,6 +30,7 @@ public class HashTable {
 			newList.insert(word);
 			_hashList[index] = newList;
 		}
+		_n++;
 	}
 	/**
 	 * searches for a given word in the table,
@@ -52,6 +54,10 @@ public class HashTable {
 		return (int) (_m * ((k*_A) %1));
 	}
 	
+	public int getN()
+	{
+		return _n;
+	}
 	
 
 }
