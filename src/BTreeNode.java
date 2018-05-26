@@ -35,7 +35,7 @@ public class BTreeNode {
         if (index < _keys.length) {
             return _keys[index];
         }
-        return "";
+        return null;
     }
 
     public BTreeNode getChild(int index){
@@ -55,6 +55,14 @@ public class BTreeNode {
         if(index < _keys.length){
             _keys[index] = str;
         }
+    }
+
+    public String[] getKeys(){
+        return _keys;
+    }
+
+    public BTreeNode[] getChildren(){
+        return _children;
     }
 
 }

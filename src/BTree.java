@@ -3,6 +3,7 @@ import java.io.FileReader;
 import java.io.IOException;
 
 public class BTree {
+    private Queue bfsQueue;
     private BTreeNode root;
     private int _t;
     private String[] _friends;
@@ -10,6 +11,7 @@ public class BTree {
     private String _fileName;
     private FileReader _fileReader;
     private BufferedReader _bufferedReader;
+    private String bTreeAsString;
 
 
     public BTree(String t) {
@@ -19,37 +21,17 @@ public class BTree {
     public void createFullTree(String path) {
         _fileName = path;
         initiatingFileHandler();
+        root = new BTreeNode(_t);
         getTreeSize();
         _friends = new String[_treeSize];
+        initiatingFileHandler();
         getFriendsFromFile();
         insertFriends();
+        bfsQueue = new Queue(_treeSize);
+        bTreeAsString = "";
     }
 
-    private void splitChild(BTreeNode x, int i, BTreeNode y) {
-        BTreeNode z = new BTreeNode(_t);
-        z.setLeaf(y.is_leaf());
-        z.set_n(_t - 1);
-        for (int j = 0; j <= _t - 1; j++) {
-            z.setKeyInPlace(j, y.getKeyInPlace((j + _t)));
-        }
-        if (!y.is_leaf()) {
-            for (int k = 0; k <= _t; k++) {
-                z.setChildInPlace(k, y.getChild((k + _t)));
-            }
-        }
-        y.set_n(_t - 1);
-        for (int j = (x.get_n() + 1); j > i + 1; j--) {
-            x.setChildInPlace(j + 1, x.getChild(j));
-        }
-        x.setChildInPlace(i + 1, z);
-        for (int j = x.get_n(); j > i; j--) {
-            x.setKeyInPlace(j + 1, x.getKeyInPlace(j));
-        }
-        x.setKeyInPlace(i, y.getKeyInPlace(_t));
-        x.set_n(x.get_n() + 1);
-    }
-
-    private boolean search(String key) {
+    public boolean search(String key) {
         if (root == null) {
             return false;
         }
@@ -81,8 +63,8 @@ public class BTree {
         int counter = 0;
         try {
             while ((currentPairOfFriends = _bufferedReader.readLine()) != null) {
-                counter++;
                 _friends[counter] = currentPairOfFriends;
+                counter++;
             }
             _bufferedReader.close();
         } catch (IOException ex) {
@@ -105,8 +87,6 @@ public class BTree {
         int counter = 0;
         try {
             while ((currentPairOfFriends = _bufferedReader.readLine()) != null) {
-                // build the btree and insert
-                insert(currentPairOfFriends);
                 counter++;
             }
         } catch (IOException ex) {
@@ -117,55 +97,102 @@ public class BTree {
         }
     }
 
+    private void splitChild(BTreeNode x, int i, BTreeNode y) {
+        BTreeNode z = new BTreeNode(_t);
+        z.setLeaf(y.is_leaf());
+        z.set_n(_t - 1);
+        for (int j = 0; j < _t - 1; j++) {
+            z.setKeyInPlace(j, y.getKeyInPlace((j + _t)));
+            y.setKeyInPlace(j + _t, null); //just for conveniently
+        }
+        if (!y.is_leaf()) {
+            for (int k = 0; k < _t; k++) {
+                z.setChildInPlace(k, y.getChild((k + _t)));
+                y.setChildInPlace(k + _t, null); //just for conveniently
+            }
+        }
+        y.set_n(_t - 1);
+        for (int j = x.get_n(); j >= i; j--) {
+            x.setChildInPlace(j + 1, x.getChild(j));
+        }
+        x.setChildInPlace(i + 1, z);
+        for (int j = x.get_n() - 1; j >= i; j--) {
+            x.setKeyInPlace(j + 1, x.getKeyInPlace(j));
+        }
+        x.setKeyInPlace(i, y.getKeyInPlace(_t - 1));
+        y.setKeyInPlace(_t - 1, null);
+        x.set_n(x.get_n() + 1);
+    }
+
     private void insert(String k) {
         BTreeNode r = root;
+        /*
+        if node is full, create a new node to be the new root and set it as father.
+         */
         if (r.get_n() == 2 * _t - 1) {
             BTreeNode s = new BTreeNode(_t);
             s.setLeaf(false);
-            s.set_n(0);
-            s.setChildInPlace(1, r);
-            splitChild(s, 1, r);
+            s.setChildInPlace(0, r);
+            root = s;
+            splitChild(s, 0, r);
             r = s;
         }
         insertNonFull(r, k);
     }
 
     private void insertNonFull(BTreeNode x, String key) {
-        int i = x.get_n();
-        if (x.is_leaf()) {
-            while (i >= 1 && key.compareTo(x.getKeyInPlace(i)) > 0) {
+        int i = x.get_n() - 1;
+        if (x.is_leaf()) { // if node is leaf, just find the place to add and add
+            while (i >= 0 && key.compareTo(x.getKeyInPlace(i)) < 0) {
                 x.setKeyInPlace(i + 1, x.getKeyInPlace(i));
                 i--;
             }
-            x.setKeyInPlace(i, key);
+            x.setKeyInPlace(i + 1, key);
             x.set_n(x.get_n() + 1);
         } else {
-            while (i >= 1 && key.compareTo(x.getKeyInPlace(i)) > 0) {
+            /*if node is not a leaf recursively continue and find the right node.
+             *split in case needed
+             */
+            while (i >= 0 && key.compareTo(x.getKeyInPlace(i)) < 0) {
                 i--;
             }
             i++;
-            if (x.getChild(i).get_n() == 2 * _t - 1) {
+            if (x.getChild(i).get_n() == 2 * _t - 1) { // if node is full
                 splitChild(x, i, x.getChild(i));
                 if (key.compareTo(x.getKeyInPlace(i)) > 0) {
                     i++;
                 }
             }
-            insertNonFull(x.getChild(i), key);
+            insertNonFull(x.getChild(i), key); // recursive call
         }
     }
 
-    private void insertFriends(){
+    private void insertFriends() {
         for (int i = 0; i < _friends.length; i++) {
             insert(_friends[i]);
         }
     }
 
     public boolean areFriends(String sender, String receiver) {
-//		search(sender + " & " + receiver );
-//		search(receiver + " & " + sender );
-//		if one of them found return true
-        return false;
+        return search(sender + " & " + receiver) || search(receiver + " & " + sender);
     }
 
+    private String BFS() {
+        if (root != null) {
+            bfsQueue.enqueue(root);
+        }
+        while (!(bfsQueue.isEmpty())) {
+            BTreeNode x = bfsQueue.dequeue();
+            for (int i = 0; i < x.getKeys().length; i++) {
+                bTreeAsString += x.getKeyInPlace(i);
+            }
+            for (int i = 0; i < x.getChildren().length; i++) {
+                if (x.getChild(i) != null) {
+                    bfsQueue.enqueue(x.getChild(i));
+                }
+            }
+        }
+        return null;
+    }
 
 }
