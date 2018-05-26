@@ -10,10 +10,18 @@ public class Spam {
 	}
 	
 	// --- Getters --- //
+	/**
+	 * gets the spam word
+	 * @return
+	 */
 	public String getWord()
 	{
 		return _word;
 	}
+	/**
+	 * gets the repeats percent allowed 
+	 * @return
+	 */
 	public int getPercent()
 	{
 		return _percent;

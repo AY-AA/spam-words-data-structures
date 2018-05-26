@@ -1,5 +1,3 @@
-
-
 import java.io.BufferedReader;
 import java.io.FileReader;
 import java.io.IOException;
@@ -50,6 +48,8 @@ public class Messages implements Iterable<Message>
 		int msgNumber = 0;
 		try {
 			while(msgNumber < _size && (currentMessage = _bufferedReader.readLine()) != null) {
+				if (currentMessage.isEmpty())
+					continue;
 				String sender = currentMessage.substring(5);
 				String receiver = _bufferedReader.readLine().substring(3);
 				String message = _bufferedReader.readLine();
@@ -145,9 +145,9 @@ public class Messages implements Iterable<Message>
 					isSpam = checkSpam(line,spamWord,spamPerc);
 				}
 				if (isSpam && spamLines.isEmpty())
-					spamLines += currMsg;
+					spamLines += line;
 				else if (isSpam)
-					spamLines += "," + currMsg;
+					spamLines += "," + line;
 			}
 			line ++;			
 		}
@@ -162,12 +162,9 @@ public class Messages implements Iterable<Message>
 	private boolean areFriends(BTree bTree,Message msg) {
 		String currSender = msg.getSender();
 		String currReceiver = msg.getReceiver();
-//		bTree.search(currSender + " & " + currReceiver)
-//		bTree.search(currReceiver + " & " + currSender)
-//		if one of them is not null, return true
-//		return false
-		// TODO Auto-generated method stub
-		return false;
+		boolean check1 = bTree.search(currSender + " & " + currReceiver);
+		boolean check2 = bTree.search(currReceiver + " & " + currSender);
+		return check1 || check2;
 	}
 	/**
 	 * checks if a spam word repeats in a message more than allowed times 
@@ -224,13 +221,8 @@ public class Messages implements Iterable<Message>
 		}
 	}
 
-	
-	
-	
-	
-	
 
-	/////////////// TESTS
+	//FOR TESTING
 	/**
 	 *  prints all messages in the given order, including '#'
 	 */
@@ -248,72 +240,5 @@ public class Messages implements Iterable<Message>
 		}
 		return ans;
 	}
-	public int getSize()
-	{
-		return _list.length;
-	}
-	/**
-	 * deletes the empty strings
-	 * @param words
-	 * @return
-	 */
-	private String[] examineWords(String[] words)
-	{
-		String ABC = "abcdefghijklmnopqrstuvwxyz";
-		String temp="";
-		for (int i=0; i< words.length; i++)
-		{
-			if (words[i].isEmpty())
-				continue;
-			String lastChar = ""+ words[i].charAt(words[i].length()-1);
-			while (words[i].length()>1 && !ABC.contains(lastChar.toLowerCase()))						//if the last char is not a letter, remove it
-			{
-				words[i] = words[i].substring(0, words[i].length()-1);
-				lastChar = ""+ words[i].charAt(words[i].length()-1);
-			}
-			String firstChar = ""+ words[i].charAt(0);
-			while (words[i].length()>1 && !ABC.contains(firstChar.toLowerCase()))						//if the last char is not a letter, remove it
-			{
-				words[i] = words[i].substring(1, words[i].length());
-				firstChar = ""+ words[i].charAt(0);
-			}
-			if (words[i].isEmpty() || (words[i].length() == 1 && !ABC.contains(words[i])))
-				continue;
-			temp += words[i] + " ";
-		}
-		return temp.split(" ");
-	}
-	
-	//////////////// DELETE AFTER TESTS! TEST WITH NO TREE
-	public String findSpams(String fileName) {
-		Spams spams = new Spams();
-		spams.generateSpams(fileName); 
-		Iterator<Spam> sItr;
-		Iterator<Message> mItr = iterator();
-		String spamLines = "";					//ans string
-		int line = 0;
-		while (mItr.hasNext()) {
-			Message currMsg = (Message) mItr.next();
-			if (5 == 5) {
-				boolean isSpam = false;
-				sItr = spams.iterator();
-				while (sItr.hasNext() && !isSpam)
-				{
-					Spam currSpam = sItr.next();
-					String spamWord = currSpam.getWord();
-					int spamPerc = currSpam.getPercent();
-					isSpam = checkSpam(line,spamWord,spamPerc);
-				}
-				if (isSpam && spamLines.isEmpty())
-					spamLines += line;
-				else if (isSpam)
-					spamLines += "," + line;
-			}
-			line ++;			
-		}
-		return spamLines;
-	}
-
-
 
 }

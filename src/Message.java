@@ -34,7 +34,7 @@ public class Message
 	
 	
 	
-	// TESTS
+	//FOR TESTING
 	/**
 	 * returns a string which includes the message's info:
 	 * sender, receiver and message content

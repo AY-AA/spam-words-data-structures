@@ -46,14 +46,21 @@ public class HashTable {
 			return null;
 		return searchList.get(word);
 	}
-	
+	/**
+	 * hash function to find the index of the given word
+	 * @param word
+	 * @return
+	 */
 	private int hash(String word)
 	{
 		String check = word.toLowerCase();
 		double k = Math.abs(check.hashCode());
 		return (int) (_m * ((k*_A) %1));
 	}
-	
+	/***
+	 * gets the number of word in the table
+	 * @return
+	 */
 	public int getN()
 	{
 		return _n;

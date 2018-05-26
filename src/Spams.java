@@ -116,10 +116,4 @@ public class Spams implements Iterable<Spam>{
 			throw new NoSuchElementException();
 		}
 	}
-
-	
-
-
-
-
 }

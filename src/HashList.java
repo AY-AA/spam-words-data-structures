@@ -12,7 +12,6 @@ public class HashList {
 		newWord.setNext(_head);
 		_head = newWord;
 	}
-
 	/**
 	 * checks if the list contains an element with a given word
 	 * @param word
@@ -44,13 +43,17 @@ public class HashList {
 		HashListElement currElem = _head;
 		while (currElem != null) 
 		{
-			if (currElem.getMessage().toLowerCase().equals(word.toLowerCase()))
+			if (currElem.getWord().toLowerCase().equals(word.toLowerCase()))
 				return currElem;
 			currElem = currElem.getNext();
 		}
 		return null;
 	}
-
+	/**
+	 * return the times a word appears in the message
+	 * @param word
+	 * @return
+	 */
 	public int getRepsNumber(String word)
 	{
 		HashListElement elem = get(word);
@@ -69,7 +72,7 @@ public class HashList {
 		HashListElement currElem = _head;
 		while (currElem != null) 
 		{
-			ans += " " +currElem.getMessage();
+			ans += " " +currElem.getWord();
 			currElem = currElem.getNext();
 		}
 		return ans;
