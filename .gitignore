@@ -1,1 +1,6 @@
 /bin/
+messages.txt
+friends.txt
+spam_words.txt
+output.txt
+src/MessagesTest.java

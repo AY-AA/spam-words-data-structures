@@ -13,7 +13,7 @@ public class Messages implements Iterable<Message>
 	private FileReader _fileReader;			
 	private BufferedReader _bufferedReader;
 	private HashTable[] _messagesHashTable;
-	
+
 	// --- Message --- //
 	/**
 	 * initializes the Messages list creation
@@ -28,6 +28,11 @@ public class Messages implements Iterable<Message>
 			getListSize();
 			_list = new Message[_size];
 			buildArray();
+			if (_list.length == 1) {
+				System.out.println("no messages found in '" + _fileName + "'");
+				_size = 0;
+				return;
+			}
 			_bufferedReader.close();
 		} 
 		catch(IOException ex) {
@@ -39,11 +44,6 @@ public class Messages implements Iterable<Message>
 	 * adds the Messages from the file to the list
 	 */
 	private void buildArray() {
-		if (_list.length == 1) {
-			System.out.println("no messages found in '" + _fileName + "'");
-			_size = 0;
-			return;
-		}
 		String currentMessage;
 		int msgNumber = 0;
 		try {
@@ -93,7 +93,13 @@ public class Messages implements Iterable<Message>
 	 */
 	public void createHashTables(String mString)
 	{
-		int m = Integer.parseInt(mString);
+		int m = 0;
+		try {  
+			m = Integer.parseInt(mString);  
+		} catch (NumberFormatException e) {  
+			System.out.println("invalid number");
+			return;  
+		} 
 		_messagesHashTable = new HashTable[_size];
 		int currTable = 0;
 		Iterator<Message> mItr = iterator();
@@ -133,7 +139,7 @@ public class Messages implements Iterable<Message>
 		String spamLines = "";					//ans string
 		int line = 0;
 		while (mItr.hasNext()) {
-			Message currMsg = (Message) mItr.next();
+			Message currMsg = mItr.next();
 			if (!areFriends(bTree,currMsg)) {
 				boolean isSpam = false;
 				sItr = spams.iterator();
@@ -144,14 +150,26 @@ public class Messages implements Iterable<Message>
 					int spamPerc = currSpam.getPercent();
 					isSpam = checkSpam(line,spamWord,spamPerc);
 				}
-				if (isSpam && spamLines.isEmpty())
-					spamLines += line;
-				else if (isSpam)
-					spamLines += "," + line;
+				spamLines += addLine(isSpam,spamLines,line);
 			}
 			line ++;			
 		}
 		return spamLines;
+	}
+	/**
+	 * adds the line to the spam lines string
+	 * @param isSpam determines whether the current message is spam or not
+	 * @param spamLines the string of spam messages
+	 * @param line is the current line which is going to be added or not to the string
+	 * @return
+	 */
+	private String addLine(boolean isSpam, String spamLines,int line) {
+		if (!isSpam)
+			return "";
+		if (spamLines.isEmpty())
+			return ""+line;
+		else 
+			return "," + line;
 	}
 	/**
 	 * checks whether the sender and receiver of a given message are friends.

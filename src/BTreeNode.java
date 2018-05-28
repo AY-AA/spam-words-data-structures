@@ -136,26 +136,4 @@ public class BTreeNode {
 	{
 		return _parent;
 	}
-
-	//FOR TESTING
-	public String toString()
-	{
-		String ans ="";
-		if (_n == 0)
-			return "";
-		int i=0;
-		while (i<_n)
-		{
-			if (_keys[i] != null && i==0)
-				ans += _keys[i];
-			else if(_keys[i] != null)
-				ans += "," + _keys[i];
-			i++;
-		}
-		return ans;
-	}
-
-
-
-
 }

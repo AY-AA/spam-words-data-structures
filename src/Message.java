@@ -30,19 +30,4 @@ public class Message
 	{
 		return _receiver;
 	}
-
-	
-	
-	
-	//FOR TESTING
-	/**
-	 * returns a string which includes the message's info:
-	 * sender, receiver and message content
-	 */
-	public String toString()
-	{
-		return "From:" + _sender + '\n' +
-							"To:" + _receiver + '\n' +
-							_content;
-	}
 }

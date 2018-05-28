@@ -46,9 +46,4 @@ public class HashListElement {
 		return _next;
 	}
 	
-	
-	
-	
-
-	
 }

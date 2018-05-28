@@ -63,20 +63,5 @@ public class HashList {
 		}
 		return -1;
 	}
-	
-	
-	//FOR TESTING
-	public String toString()
-	{
-		String ans=" ";
-		HashListElement currElem = _head;
-		while (currElem != null) 
-		{
-			ans += " " +currElem.getWord();
-			currElem = currElem.getNext();
-		}
-		return ans;
-	}
-
 
 }

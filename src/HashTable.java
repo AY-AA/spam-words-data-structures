@@ -65,6 +65,4 @@ public class HashTable {
 	{
 		return _n;
 	}
-	
-
 }
